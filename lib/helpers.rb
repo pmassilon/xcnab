@@ -87,6 +87,30 @@ class String #:nodoc:
   def blank?
     empty?
   end
+
+  # Converts a string to a Date value.
+  # "01/02/2020" # => #<Date: 2020-02-01 ((2458881j,0s,0n),+0s,2299161j)>
+  def to_date
+    ::Date.parse(self, false) unless blank?
+  end
+
+  # Converts a string to a Date value.
+  # "01/02/2020 10:30" # => #<Date: 2020-02-01 ((2458881j,0s,0n),+0s,2299161j)>
+
+  def to_datetime
+    ::DateTime.parse(self, false) unless blank?
+  end
+
+  # Returns the string, first removing all whitespace on both ends of the string, and then changing remaining consecutive whitespace groups into one space each.
+  #   str = " foo   bar    \n   \t   boo"
+  #   str.squish! # => "foo bar boo"
+  #   str # => "foo bar boo"
+  # @return [String]
+  def squish!
+    gsub!(/[[:space:]]+/, " ")
+    strip!
+    self
+  end
 end
 
 class Date #:nodoc:

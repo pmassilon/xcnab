@@ -3,7 +3,6 @@
 require 'date'
 require 'i18n'
 
-
 module Xcnab
   module Util
     def tipo_empresa(documento, tamanho = 1)
@@ -49,7 +48,7 @@ module Xcnab
       end
     end
 
-    def bloco_zerado(tamanho, numero = '', alinhamento = :right)
+    def bloco_zerado(tamanho, numero = '0', alinhamento = :right)
       numero ||= ''
 
       if alinhamento == :right
@@ -59,7 +58,7 @@ module Xcnab
       end
     end
 
-    def formata_texto(texto, tamanho, alinhamento = :left)
+    def campo_texto(texto, tamanho, alinhamento = :left)
       texto = texto.to_s
 
       if texto.to_s.size > tamanho
@@ -69,7 +68,7 @@ module Xcnab
       end
     end
 
-    def formata_numero(numero, tamanho, alinhamento = :right)
+    def campo_numerico(numero, tamanho, alinhamento = :right)
       numero = numero.to_s
 
       if numero.to_s.size > tamanho
@@ -79,16 +78,16 @@ module Xcnab
       end
     end
 
-    def formata_cep(cep, formato = :completo)
-      cep = formata_numero(cep, 8)
+    def formatar_cep(cep, formato = :completo)
+      cep = campo_numerico(cep, 8)
 
       case formato
       when :completo
         cep
       when :prefixo
-        formata_numero(cep[0..4], 5)
+        campo_numerico(cep[0..4], 5)
       when :sufixo
-        formata_numero(cep[5..7], 3)
+        campo_numerico(cep[5..7], 3)
       else
         '00000000'
       end
@@ -105,13 +104,14 @@ module Xcnab
       end
     end
 
-    def formata_valor(valor, tamanho, decimal = 2)
-      valor = valor.presence || 0
-      format("%.#{decimal}f", valor).delete('.').rjust(tamanho, '0')
+    def formatar_valor(valor, tamanho, decimal = 2)
+      valor = converter_valor(valor)
+      valor =  format("%.#{decimal}f", valor).delete('.')
+      campo_numerico(valor, tamanho)
     end
 
-    def formata_documento(documento, tamanho = 14)
-      formata_numero(documento.delete('/.-'), tamanho)
+    def formatar_documento(documento, tamanho = 14)
+      campo_numerico(documento.delete('/.-'), tamanho)
     end
 
     def limpar_texto(texto)
@@ -125,6 +125,21 @@ module Xcnab
 
     def truncate(texto, tamanho)
       texto.to_s[0..(tamanho - 1)]
+    end
+
+    def converter_valor(valor)
+      valor = valor.dup
+      return '0' if valor.nil?
+      return valor if valor.is_a?(Numeric)
+
+      valor.gsub!(/[^\d^,.]/, '')
+      if valor.include?(',')
+        valor.delete!('.')
+        valor.gsub!(',', '.')
+      end
+
+      valor.squish!
+      valor.to_f
     end
   end
 end

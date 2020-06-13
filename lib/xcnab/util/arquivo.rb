@@ -20,11 +20,11 @@ module Xcnab
     end
 
     def contador_lote(contador, tamanho = 4)
-      format_zero(contador, tamanho)
+      campo_numerico(contador, tamanho)
     end
 
     def contador_registro(registros, tamanho = 4)
-      format_zero(registros.count, tamanho)
+      campo_numerico(registros.count, tamanho)
     end
 
     def valor_total_registros(registros, tamanho = 13)
@@ -33,11 +33,11 @@ module Xcnab
     end
 
     def contador_lotes(lotes, tamanho = 4)
-      format_zero(lotes.count, tamanho)
+      campo_numerico(lotes.count, tamanho)
     end
 
     def contador_registros_lotes(lotes, tamanho)
-      format_zero(lotes.map { |lote| lote.registros.count }.sum, tamanho)
+      campo_numerico(lotes.map { |lote| lote.registros.count }.sum, tamanho)
     end
   end
 end
